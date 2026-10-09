@@ -38,6 +38,11 @@
 </condition>
 <target name="common_init">
 <mkdir dir="${SYSTEMTEST_DEST}" />
+<!-- z/OS: tag third-party jars as binary so AUTOCVT does not corrupt reads (fixes asm.jar pread failure) -->
+<exec executable="sh" failonerror="false" failifexecutionfails="false" if:set="isZOS">
+<arg value="-c"/>
+<arg value="if [ -d &quot;${env.SYSTEM_LIB_DIR}&quot; ]; then find &quot;${env.SYSTEM_LIB_DIR}&quot; -name '*.jar' -exec chtag -b {} \; ; ls -T &quot;${env.SYSTEM_LIB_DIR}/asm/asm.jar&quot;; fi"/>
+</exec>
 </target>
 <target name="clone_stf">
 <getFileWithRetry file="STF" command="git clone -q ${stf_repo}" dest="${SYSTEMTEST_ROOT}"/>
