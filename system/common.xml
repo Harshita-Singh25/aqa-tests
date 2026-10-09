@@ -31,6 +31,11 @@
 </condition>
 <target name="common_init">
 <mkdir dir="${SYSTEMTEST_DEST}" />
+<!-- z/OS: make sure prerequisite jars are tagged binary, otherwise AUTOCVT corrupts reads (pread failed) -->
+<apply executable="chtag" parallel="true" failonerror="false" if:set="isZOS">
+<arg value="-b"/>
+<fileset dir="${env.SYSTEM_LIB_DIR}" includes="**/*.jar" erroronmissingdir="false"/>
+</apply>
 </target>
 <target name="clone_stf">
 <getFileWithRetry file="STF" command="git clone -q ${stf_repo}" dest="${SYSTEMTEST_ROOT}"/>
