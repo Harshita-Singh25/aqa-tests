@@ -44,16 +44,25 @@
 		</and>
 	</condition>
 
-	<target name="common_init" depends="setEnvOptions">
-		<if>
-			<not>
-				<available file="${SYSTEMTEST_DEST}" type="dir" />
-			</not>
-			<then>
-				<mkdir dir="${SYSTEMTEST_DEST}" />
-			</then>
-		</if>
-	</target>
+<target name="common_init" depends="setEnvOptions">
+    <if>
+        <not>
+            <available file="${SYSTEMTEST_DEST}" type="dir" />
+        </not>
+        <then>
+            <mkdir dir="${SYSTEMTEST_DEST}" />
+        </then>
+    </if>
+    <if>
+        <isset property="isZOS" />
+        <then>
+            <exec executable="sh" failonerror="false">
+                <arg value="-c" />
+                <arg value="chtag -b ${env.SYSTEM_LIB_DIR}/asm/*.jar" />
+            </exec>
+        </then>
+    </if>
+</target>
 
 	<target name="clone_stf">
 		<getFileWithRetry file="STF" command="git clone -q ${stf_repo}" dest="${SYSTEMTEST_ROOT}"/>
