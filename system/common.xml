@@ -10,25 +10,21 @@
 	<condition property="isZOS" value="true">
 		<equals arg1="${os.name}" arg2="z/OS"/>
 	</condition>
-
 	<condition property="git-prefix" value="git" else="https">
 		<isset property="isZOS"/>
 	</condition>
-
 	<condition property="openjdk_systemtest_repo" value="${env.ADOPTOPENJDK_SYSTEMTEST_REPO}" else="${git-prefix}://github.com/adoptium/aqa-systemtest.git">
 		<isset property="env.ADOPTOPENJDK_SYSTEMTEST_REPO"/>
 	</condition>
 	<condition property="openjdk_systemtest_branch" value="${env.ADOPTOPENJDK_SYSTEMTEST_BRANCH}" else="master">
 		<isset property="env.ADOPTOPENJDK_SYSTEMTEST_BRANCH"/>
 	</condition>
-
 	<condition property="openj9_systemtest_repo" value="${env.OPENJ9_SYSTEMTEST_REPO}" else="${git-prefix}://github.com/eclipse-openj9/openj9-systemtest.git">
 		<isset property="env.OPENJ9_SYSTEMTEST_REPO"/>
 	</condition>
 	<condition property="openj9_systemtest_branch" value="${env.OPENJ9_SYSTEMTEST_BRANCH}" else="master">
 		<isset property="env.OPENJ9_SYSTEMTEST_BRANCH"/>
 	</condition>
-
 	<condition property="stf_repo" value="${env.STF_REPO}" else="${git-prefix}://github.com/adoptium/STF.git">
 		<isset property="env.STF_REPO"/>
 	</condition>
@@ -39,6 +35,7 @@
 	<target name="common_init">
 		<mkdir dir="${SYSTEMTEST_DEST}" />
 	</target>
+
 	<target name="clone_stf">
 		<getFileWithRetry file="STF" command="git clone -q ${stf_repo}" dest="${SYSTEMTEST_ROOT}"/>
 		<echo message="git rev-parse ${stf_branch} "/>
@@ -46,6 +43,7 @@
 			<arg value="rev-parse"/>
 			<arg value="${stf_branch}"/>
 		</exec>
+
 		<!-- If branch not found locally (code=128), try origin/branch -->
 		<condition property="stf_code_128">
 			<equals arg1="${code}" arg2="128"/>
@@ -55,9 +53,11 @@
 			<arg value="rev-parse"/>
 			<arg value="origin/${stf_branch}"/>
 		</exec>
+
 		<!-- Use sha2 if branch wasn't found locally, otherwise sha1 -->
 		<property name="stf_sha_raw" value="${stf_sha2}" if:set="stf_code_128"/>
 		<property name="stf_sha_raw" value="${stf_sha1}"/>
+
 		<!-- Strip newlines (safe on all platforms, needed on z/OS) -->
 		<loadresource property="stf_sha">
 			<propertyresource name="stf_sha_raw"/>
@@ -66,6 +66,7 @@
 				<trim/>
 			</filterchain>
 		</loadresource>
+
 		<echo message="git checkout -q -f ${stf_sha} "/>
 		<exec executable="git" failonerror="true" dir="${SYSTEMTEST_ROOT}/STF" >
 			<arg value="checkout"/>
@@ -73,7 +74,8 @@
 			<arg value="-f"/>
 			<arg value="${stf_sha}"/>
 		</exec>
-		<!-- z/OS specific git attribute handling -->
+
+		<!-- z/OS specific git attribute handling for STF -->
 		<delete includeemptydirs="true" failonerror="false" if:set="isZOS">
 			<fileset dir="${SYSTEMTEST_ROOT}/STF/.git/info" includes="**/*"/>
 		</delete>
@@ -90,8 +92,10 @@
 			<arg value="reset" />
 			<arg value="--hard" />
 		</exec>
+
 		<addTestenvProperties repoDir="${SYSTEMTEST_ROOT}/STF" repoName="STF"/>
 	</target>
+
 	<target name="clone_systemtest">
 		<getFileWithRetry file="aqa-systemtest" command="git clone -q ${openjdk_systemtest_repo}" dest="${SYSTEMTEST_ROOT}"/>
 		<echo message="git rev-parse ${openjdk_systemtest_branch} "/>
@@ -99,6 +103,7 @@
 			<arg value="rev-parse"/>
 			<arg value="${openjdk_systemtest_branch}"/>
 		</exec>
+
 		<!-- If branch not found locally (code=128), try origin/branch -->
 		<condition property="systemtest_code_128">
 			<equals arg1="${code}" arg2="128"/>
@@ -108,9 +113,11 @@
 			<arg value="rev-parse"/>
 			<arg value="origin/${openjdk_systemtest_branch}"/>
 		</exec>
+
 		<!-- Use sha2 if branch wasn't found locally, otherwise sha1 -->
 		<property name="openjdk_systemtest_sha_raw" value="${openjdk_systemtest_sha2}" if:set="systemtest_code_128"/>
 		<property name="openjdk_systemtest_sha_raw" value="${openjdk_systemtest_sha1}"/>
+
 		<!-- Strip newlines (safe on all platforms, needed on z/OS) -->
 		<loadresource property="openjdk_systemtest_sha">
 			<propertyresource name="openjdk_systemtest_sha_raw"/>
@@ -119,6 +126,7 @@
 				<trim/>
 			</filterchain>
 		</loadresource>
+
 		<echo message="git checkout -q -f ${openjdk_systemtest_sha} "/>
 		<exec executable="git" failonerror="true" dir="${SYSTEMTEST_ROOT}/aqa-systemtest" >
 			<arg value="checkout"/>
@@ -126,7 +134,8 @@
 			<arg value="-f"/>
 			<arg value="${openjdk_systemtest_sha}"/>
 		</exec>
-		<!-- z/OS specific git attribute handling -->
+
+		<!-- z/OS specific git attribute handling for aqa-systemtest -->
 		<delete includeemptydirs="true" failonerror="false" if:set="isZOS">
 			<fileset dir="${SYSTEMTEST_ROOT}/aqa-systemtest/.git/info" includes="**/*"/>
 		</delete>
@@ -143,7 +152,8 @@
 			<arg value="reset" />
 			<arg value="--hard" />
 		</exec>
- 		<addTestenvProperties repoDir="${SYSTEMTEST_ROOT}/aqa-systemtest" repoName="AQA_SYSTEMTEST" />
+
+		<addTestenvProperties repoDir="${SYSTEMTEST_ROOT}/aqa-systemtest" repoName="AQA_SYSTEMTEST" />
 	</target>
 
 	<target name="clone_openj9-systemtest">
@@ -153,6 +163,7 @@
 			<arg value="rev-parse"/>
 			<arg value="${openj9_systemtest_branch}"/>
 		</exec>
+
 		<!-- If branch not found locally (code=128), try origin/branch -->
 		<condition property="openj9_code_128">
 			<equals arg1="${code}" arg2="128"/>
@@ -162,9 +173,11 @@
 			<arg value="rev-parse"/>
 			<arg value="origin/${openj9_systemtest_branch}"/>
 		</exec>
+
 		<!-- Use sha2 if branch wasn't found locally, otherwise sha1 -->
 		<property name="openj9_systemtest_sha_raw" value="${openj9_systemtest_sha2}" if:set="openj9_code_128"/>
 		<property name="openj9_systemtest_sha_raw" value="${openj9_systemtest_sha1}"/>
+
 		<!-- Strip newlines (safe on all platforms, needed on z/OS) -->
 		<loadresource property="openj9_systemtest_sha">
 			<propertyresource name="openj9_systemtest_sha_raw"/>
@@ -173,6 +186,7 @@
 				<trim/>
 			</filterchain>
 		</loadresource>
+
 		<echo message="git checkout -q -f ${openj9_systemtest_sha} "/>
 		<exec executable="git" failonerror="true" dir="${SYSTEMTEST_ROOT}/openj9-systemtest" >
 			<arg value="checkout"/>
@@ -180,7 +194,8 @@
 			<arg value="-f"/>
 			<arg value="${openj9_systemtest_sha}"/>
 		</exec>
-		<!-- z/OS specific git attribute handling -->
+
+		<!-- z/OS specific git attribute handling for openj9-systemtest -->
 		<delete includeemptydirs="true" failonerror="false" if:set="isZOS">
 			<fileset dir="${SYSTEMTEST_ROOT}/openj9-systemtest/.git/info" includes="**/*"/>
 		</delete>
@@ -197,7 +212,8 @@
 			<arg value="reset" />
 			<arg value="--hard" />
 		</exec>
- 		<addTestenvProperties repoDir="${SYSTEMTEST_ROOT}/openj9-systemtest" repoName="OPENJ9_SYSTEMTEST"/>
+
+		<addTestenvProperties repoDir="${SYSTEMTEST_ROOT}/openj9-systemtest" repoName="OPENJ9_SYSTEMTEST"/>
 	</target>
 
 	<target name="check_systemtest" depends="common_init">
@@ -221,6 +237,7 @@
 				<contains string="${JVM_VERSION}" substring="ibm"/>
 			</or>
 		</condition>
+
 		<condition property="openj9_systemtest.exists">
 			<available file="${SYSTEMTEST_ROOT}/openj9-systemtest" type="dir" />
 		</condition>
@@ -266,7 +283,6 @@
 		<copy todir="${SYSTEMTEST_DEST}/systemtest_prereqs/" if:true="${system_lib_dir_not_set}">
 			<fileset dir="${TEST_ROOT}/systemtest_prereqs/" includes="**"/>
 		</copy>
-		
 		<condition property="is_svt_testrepo">
 			<equals arg1="${env.IS_SVT_TESTREPO}" arg2="true"/>
 		</condition>
