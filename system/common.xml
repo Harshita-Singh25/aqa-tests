@@ -138,7 +138,7 @@
 					<arg value="rev-parse"/>
 					<arg value="origin/${openjdk_systemtest_branch}"/>
 				</exec>
-				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha2.txt" encoding="ISO-8859-1"
+				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha2.txt" encoding="ISO-8859-1" />
 			</then>
 		</if>
 		<if>
@@ -146,7 +146,7 @@
 				<isset property="openjdk_systemtest_sha"/>
 			</not>
 			<then>
-				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha1.txt" encoding="ISO-8859-1"
+				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha1.txt" encoding="ISO-8859-1" />
 			</then>
 		</if>
 		<if>
@@ -207,7 +207,7 @@
 					<arg value="rev-parse"/>
 					<arg value="origin/${openj9_systemtest_branch}"/>
 				</exec>
-				<loadfile property="openj9_systemtest_sha" srcFile="openj9_systemtest_sha2.txt" />
+				<loadfile property="openj9_systemtest_sha" srcFile="openj9_systemtest_sha2.txt" encoding="ISO-8859-1" />
 			</then>
 		</if>
 		<if>
@@ -215,7 +215,7 @@
 				<isset property="openj9_systemtest_sha"/>
 			</not>
 			<then>
-				<loadfile property="openj9_systemtest_sha" srcFile="openj9_systemtest_sha1.txt" />
+				<loadfile property="openj9_systemtest_sha" srcFile="openj9_systemtest_sha1.txt" encoding="ISO-8859-1" />
 			</then>
 		</if>
 		<if>
