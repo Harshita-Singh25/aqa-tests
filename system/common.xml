@@ -70,7 +70,7 @@
 					<arg value="rev-parse"/>
 					<arg value="origin/${stf_branch}"/>
 				</exec>
-				<loadfile property="stf_sha" srcFile="stf_sha2.txt" />
+				<loadfile property="stf_sha" srcFile="stf_sha2.txt" encoding="ISO-8859-1" />
 			</then>
 		</if>
 		<if>
@@ -78,7 +78,7 @@
 				<isset property="stf_sha"/>
 			</not>
 			<then>
-				<loadfile property="stf_sha" srcFile="stf_sha1.txt" />
+				<loadfile property="stf_sha" srcFile="stf_sha1.txt" encoding="ISO-8859-1" />
 			</then>
 		</if>
 		<if>
@@ -87,7 +87,7 @@
 				<propertyregex
 					property="stf_sha"
 					input="${stf_sha}"
-					regexp="\n"
+					regexp="[\r\n]+"
 					replace=""
 					override="true"/>
 			</then>
@@ -138,7 +138,7 @@
 					<arg value="rev-parse"/>
 					<arg value="origin/${openjdk_systemtest_branch}"/>
 				</exec>
-				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha2.txt" />
+				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha2.txt" encoding="ISO-8859-1"
 			</then>
 		</if>
 		<if>
@@ -146,7 +146,7 @@
 				<isset property="openjdk_systemtest_sha"/>
 			</not>
 			<then>
-				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha1.txt" />
+				<loadfile property="openjdk_systemtest_sha" srcFile="openjdk_systemtest_sha1.txt" encoding="ISO-8859-1"
 			</then>
 		</if>
 		<if>
@@ -155,7 +155,7 @@
 				<propertyregex
 					property="openjdk_systemtest_sha"
 					input="${openjdk_systemtest_sha}"
-					regexp="\n"
+					regexp="[\r\n]+"
 					replace=""
 					override="true"/>
 			</then>
@@ -224,7 +224,7 @@
 				<propertyregex
 					property="openj9_systemtest_sha"
 					input="${openj9_systemtest_sha}"
-					regexp="\n"
+					regexp="[\r\n]+"
 					replace=""
 					override="true"/>
 			</then>
